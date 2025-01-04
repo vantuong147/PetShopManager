@@ -1,6 +1,7 @@
 package ViewModel;
 
 public class PetCard {
+	public String mode;
 	public String name;
 	public String imageUrl;
 	public String des;
@@ -11,11 +12,15 @@ public class PetCard {
 	public float minPrice;
 	public float maxPrice;
 	
+	
+	public float petPrice;
+	public int specID = 0;
+	
 	public PetCard()
 	{
 		
 	}
-	 public PetCard(String name, String imageUrl, String des, int quantity) {
+	 public PetCard(String mode, String name, String imageUrl, String des, int quantity) {
 	    this.name = name;
 	    this.imageUrl = imageUrl;
 	    this.des = des;

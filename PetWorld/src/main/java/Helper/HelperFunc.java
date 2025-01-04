@@ -1,8 +1,12 @@
 package Helper;
 
+import java.awt.FlowLayout;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
 
 public class HelperFunc {
 	public static <T> ArrayList<T> CloneList(ArrayList<T> lst)
@@ -20,5 +24,12 @@ public class HelperFunc {
 	    // Định dạng số theo kiểu tiền tệ với đơn vị VND
 	    NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 	    return formatter.format(amount);
+	}
+	public static void AddButtonToPanel(JPanel buttonPanel, ArrayList<JButton> buttons)
+	{
+		for(int i = 0; i<buttons.size(); i++)
+		{
+			buttonPanel.add(buttons.get(i));
+		}
 	}
 }

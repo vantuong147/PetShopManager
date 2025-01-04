@@ -84,11 +84,13 @@ public class PetSpecies {
     public PetCard toPetCard()
     {
     	PetCard pc = new PetCard();
+    	pc.mode = "SPEC";
     	pc.name = this.speciesName;
     	pc.imageUrl = this.imageUrl;
     	pc.des = "";
     	pc.quantity = this.unsoldQuantity;
     	pc.species = this.speciesName;
+    	pc.specID = this.id;
     	pc.weight = this.avgWeight;
     	pc.color = "Xanh";
     	pc.minPrice = this.avgMinPrice;

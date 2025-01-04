@@ -1,5 +1,8 @@
 package Model;
 
+import DAO.PetSpeciesDAO;
+import ViewModel.PetCard;
+
 public class Pet {
 	public int id;
 	public String petName;
@@ -9,8 +12,11 @@ public class Pet {
     public String description;
     public String state;
     public int petSpeciesId;
+    
+    public String images;
+    public float weight;
 
-    public Pet(int id, String petName, float price, int age, String color, String description, String state, int petSpeciesId) {
+    public Pet(int id, String petName, float price, int age, String color, String description, String state, int petSpeciesId, String images, float weight) {
         this.id = id;
         this.petName = petName;
         this.price = price;
@@ -19,6 +25,8 @@ public class Pet {
         this.description = description;
         this.state = state;
         this.petSpeciesId = petSpeciesId;
+        this.images = images;
+        this.weight = weight;
     }
 
     public int getId() {
@@ -83,6 +91,27 @@ public class Pet {
 
     public void setPetSpeciesId(int petSpeciesId) {
         this.petSpeciesId = petSpeciesId;
+    }
+    
+    public PetCard toPetCard()
+    {
+    	PetSpeciesDAO psDAO = new PetSpeciesDAO();
+    	PetSpecies p = psDAO.getPetSpeciesById(this.petSpeciesId);
+    	
+    	PetCard pc = new PetCard();
+    	pc.mode = "PET";
+    	pc.name = this.petName;
+    	pc.imageUrl = this.images.split(",")[0];
+    	pc.des = this.description;
+    	pc.quantity = 1;
+    	pc.species = p.speciesName;
+    	pc.specID = this.petSpeciesId;
+    	pc.weight = this.weight;
+    	pc.color = this.color;
+    	pc.minPrice = -1;
+    	pc.maxPrice = -1;
+    	pc.petPrice = this.price;
+    	return pc;
     }
 
     @Override

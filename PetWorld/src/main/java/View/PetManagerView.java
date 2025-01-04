@@ -2,6 +2,8 @@ package View;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.View;
+
 import ViewModel.PetCard;
 
 import java.awt.*;
@@ -12,12 +14,18 @@ import java.util.*;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 
+import DAO.PetDAO;
 import DBManager.PetDBManager;
+import Helper.Debug;
 import Helper.HelperFunc;
+import Model.Pet;
 import Model.PetSpecies;
 
 public class PetManagerView extends JFrame {
     private JPanel mainPanel;
+    JSplitPane splitPane;
+    JPanel menuPanel;
+    
     private static final String DOWNLOAD_HISTORY = "DownloadHistory_Pet.json";
     private static final String IMAGE_DIR = "pet_images/";
     private ArrayList<PetCard> petList;
@@ -37,10 +45,11 @@ public class PetManagerView extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         splitPane.setDividerLocation(200); // Move filter and Pet display to the right
+        add(splitPane, BorderLayout.CENTER);
 
-        JPanel menuPanel = new JPanel();
+        this.menuPanel = new JPanel();
         menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.Y_AXIS));
         menuPanel.setBackground(new Color(60, 63, 65));
         menuPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 2, Color.DARK_GRAY));
@@ -49,18 +58,76 @@ public class PetManagerView extends JFrame {
         menuPanel.add(btnHome);
         menuPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        JButton btnPetManager = createStyledButton("Pet Manager", "pet-manager-icon.png");
-        JButton btnPetDetail = createStyledButton("Pet Detail", "pet-detail-icon.png");
-        JButton btnPetImportExport = createStyledButton("Pet Import/Export", "import-export-icon.png");
-        JButton btnAccount = createStyledButton("Account", "account-icon.png");
-
-        menuPanel.add(btnPetManager);
-        menuPanel.add(btnPetDetail);
-        menuPanel.add(btnPetImportExport);
-        menuPanel.add(btnAccount);
+        JButton btnPetManager = createStyledButton("Pet Manager", "./Assets/pets.png");
+        JButton btnPetDetail = createStyledButton("Selected Pet Species", "./Assets/pet_2.png");
+        JButton btnPetImportExport = createStyledButton("Pet Import/Export", "./Assets/add_pet.png");
+        JButton btnAccount = createStyledButton("Account", "./Assets/user.png");
+        
+        ArrayList<JButton> menuButtons = new ArrayList<JButton>();
+        menuButtons.add(btnPetManager);
+        menuButtons.add(btnPetDetail);
+        menuButtons.add(btnPetImportExport);
+        menuButtons.add(btnAccount);
+        for (int i = 0 ; i < menuButtons.size(); i++)
+        {
+        	addHighlightAction(menuButtons.get(i));
+        }
+        
+        HelperFunc.AddButtonToPanel(menuPanel, menuButtons);
+        
+        
         menuPanel.add(Box.createVerticalGlue());
+        
+        ViewPetSpeciesPanel();
+        setVisible(true);
+        
+        btnPetManager.addActionListener(e->{
+        	ViewPetSpeciesPanel();
+        });
+        
+        btnPetDetail.addActionListener(e->{
+        	LoadPetInSelectedSpec(selectedSpec);
+        });
+        btnPetImportExport.addActionListener(e->{
+        	LoadImportExportView();
+        });
+        
 
-        mainPanel = new JPanel();
+    }
+    
+    JButton selectedButton = null;
+    private void addHighlightAction(JButton button) {
+        button.addActionListener(e -> {
+        	 if (selectedButton != null) {
+                 selectedButton.setBorder(null);  // Bỏ highlight nút cũ
+             }
+             button.setBorder(BorderFactory.createLineBorder(Color.BLUE, 3));  // Highlight nút mới
+             selectedButton = button;
+        });
+    }
+    
+    private int selectedSpec = 0;
+    
+    private void LoadPetInSelectedSpec(int selectedSpec)
+    {
+    	Debug.Log("LoadPetInSpec: " + selectedSpec);
+    	if (selectedSpec == 0) return;
+    	petListFull = loadPetInSpeiciesData(selectedSpec);
+        petList = HelperFunc.CloneList(petListFull);
+        updatePagination();
+        changePage(0);
+    }
+    
+    private void LoadImportExportView()
+    {
+    	Debug.Log("Import/Export view");
+    	JPanel rightPanel = new AddPetPanel();
+        splitPane.setRightComponent(rightPanel);
+    }
+    
+    private JPanel ViewPetSpeciesPanel()
+    {
+    	this.mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(0, 3, 20, 20));
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
@@ -80,14 +147,13 @@ public class PetManagerView extends JFrame {
         splitPane.setLeftComponent(menuPanel);
         splitPane.setRightComponent(rightPanel);
 
-        add(splitPane, BorderLayout.CENTER);
-
-        setVisible(true);
-
+       
         petListFull = loadPetData();
         petList = HelperFunc.CloneList(petListFull);
         loadPetCards(petList);
         updatePagination();
+        
+        return this.mainPanel;
     }
 
     private JPanel createFilterPanel() {
@@ -171,6 +237,7 @@ public class PetManagerView extends JFrame {
     }
 
     private void loadPetCards(ArrayList<PetCard> pets) {
+    	Debug.Log("Load pet cards: " + pets.size());
         mainPanel.removeAll();
 
         int startIndex = currentPage * petsPerPage;
@@ -202,7 +269,17 @@ public class PetManagerView extends JFrame {
 
         JLabel petNameLabel = new JLabel(pet.name);
         JLabel petQuantityLabel = new JLabel("Số lượng: " + pet.quantity);
-        JLabel petPriceLabel = new JLabel("Giá: " + HelperFunc.formatCurrency(pet.minPrice) + " - " + HelperFunc.formatCurrency(pet.maxPrice));
+        
+        JLabel petPriceLabel = null;
+        if (pet.mode == "SPEC")
+        {
+        	petPriceLabel = new JLabel("Giá: " + HelperFunc.formatCurrency(pet.minPrice) + " - " + HelperFunc.formatCurrency(pet.maxPrice));
+        }
+        else
+        {
+        	petPriceLabel = new JLabel("Giá: " + HelperFunc.formatCurrency(pet.petPrice));
+        }
+        
         JLabel petColorLabel = new JLabel("Màu sắc: " + pet.color);  // Thêm thông tin màu sắc
 
         petNameLabel.setFont(new Font("Arial", Font.BOLD, 16));
@@ -212,7 +289,35 @@ public class PetManagerView extends JFrame {
         petColorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Căn chỉnh label màu sắc
         petImage.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Create View button with a more attractive design and smaller size
+       ArrayList<JButton> buttons = new ArrayList<JButton>();
+       if (pet.mode == "SPEC")
+    	   buttons = GenerateButtonForSPEC(pet);
+       else
+    	   buttons = GenerateButtonForPET(pet);
+
+       
+
+        // Create a panel to hold the buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // Center align the buttons
+        HelperFunc.AddButtonToPanel(buttonPanel, buttons);
+
+        card.add(Box.createVerticalGlue());
+        card.add(petImage);
+        card.add(Box.createRigidArea(new Dimension(0, 10)));
+        card.add(petNameLabel);
+        card.add(petQuantityLabel);
+        card.add(petPriceLabel);  // Thêm label giá vào card
+        card.add(petColorLabel);  // Thêm label màu sắc vào card
+        card.add(buttonPanel);  // Add the button panel
+        card.add(Box.createVerticalGlue());
+
+        return card;
+    }
+    
+    private ArrayList<JButton> GenerateButtonForSPEC(PetCard pet)
+    {
+    	 // Create View button with a more attractive design and smaller size
         JButton viewButton = new JButton("View");
         viewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         viewButton.setFont(new Font("Arial", Font.BOLD, 12));  // Smaller font size
@@ -221,7 +326,12 @@ public class PetManagerView extends JFrame {
         viewButton.setBorder(BorderFactory.createLineBorder(new Color(28, 145, 41), 2)); // Border
         viewButton.setFocusPainted(false);
         viewButton.setPreferredSize(new Dimension(70, 25));  // Smaller button size
-        viewButton.addActionListener(e -> System.out.println("View Card:"));
+        viewButton.addActionListener(e -> 
+        {
+        	System.out.println("View Card:");
+        	this.selectedSpec = pet.specID;
+        	LoadPetInSelectedSpec(this.selectedSpec);
+        });
 
         // Create Edit button with a more attractive design and smaller size
         JButton editButton = new JButton("Edit");
@@ -244,40 +354,58 @@ public class PetManagerView extends JFrame {
         deleteButton.setFocusPainted(false);
         deleteButton.setPreferredSize(new Dimension(70, 25));  // Smaller button size
         deleteButton.addActionListener(e -> System.out.println("Delete Card"));
-
-        // Add a mouse click listener to the pet card
-        card.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Print pet information to the console
-                System.out.println("Pet Name: " + pet.name);
-                System.out.println("Species: " + pet.species);
-                System.out.println("Color: " + pet.color);
-                System.out.println("Weight: " + pet.weight);
-                System.out.println("Quantity: " + pet.quantity);
-                System.out.println("Price: " + pet.minPrice);  // In ra giá khi click
-            }
+        
+        ArrayList<JButton> rs = new ArrayList<JButton>();
+        rs.add(viewButton);
+        rs.add(editButton);
+        rs.add(deleteButton);
+        return rs;
+    }
+    
+    private ArrayList<JButton> GenerateButtonForPET(PetCard pet)
+    {
+    	 // Create View button with a more attractive design and smaller size
+        JButton viewButton = new JButton("Sell");
+        viewButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        viewButton.setFont(new Font("Arial", Font.BOLD, 12));  // Smaller font size
+        viewButton.setBackground(new Color(40, 167, 69)); // Set background color (green)
+        viewButton.setForeground(Color.WHITE);  // Set text color (white)
+        viewButton.setBorder(BorderFactory.createLineBorder(new Color(28, 145, 41), 2)); // Border
+        viewButton.setFocusPainted(false);
+        viewButton.setPreferredSize(new Dimension(70, 25));  // Smaller button size
+        viewButton.addActionListener(e -> 
+        {
+        	System.out.println("Sell Pet: " + pet.name);
         });
 
-        // Create a panel to hold the buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // Center align the buttons
-        buttonPanel.add(viewButton);  // Add View button first
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
+        // Create Edit button with a more attractive design and smaller size
+        JButton editButton = new JButton("Edit");
+        editButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        editButton.setFont(new Font("Arial", Font.BOLD, 12));  // Smaller font size
+        editButton.setBackground(new Color(0, 123, 255)); // Set background color (blue)
+        editButton.setForeground(Color.WHITE);  // Set text color (white)
+        editButton.setBorder(BorderFactory.createLineBorder(new Color(0, 86, 179), 2)); // Border
+        editButton.setFocusPainted(false);
+        editButton.setPreferredSize(new Dimension(70, 25));  // Smaller button size
+        editButton.addActionListener(e -> System.out.println("Edit Card:"));
 
-        card.add(Box.createVerticalGlue());
-        card.add(petImage);
-        card.add(Box.createRigidArea(new Dimension(0, 10)));
-        card.add(petNameLabel);
-        card.add(petQuantityLabel);
-        card.add(petPriceLabel);  // Thêm label giá vào card
-        card.add(petColorLabel);  // Thêm label màu sắc vào card
-        card.add(buttonPanel);  // Add the button panel
-        card.add(Box.createVerticalGlue());
-
-        return card;
+        // Create Delete button with a more attractive design and smaller size
+        JButton deleteButton = new JButton("Delete");
+        deleteButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        deleteButton.setFont(new Font("Arial", Font.BOLD, 12));  // Smaller font size
+        deleteButton.setBackground(new Color(220, 53, 69)); // Set background color (red)
+        deleteButton.setForeground(Color.WHITE);  // Set text color (white)
+        deleteButton.setBorder(BorderFactory.createLineBorder(new Color(185, 41, 56), 2)); // Border
+        deleteButton.setFocusPainted(false);
+        deleteButton.setPreferredSize(new Dimension(70, 25));  // Smaller button size
+        deleteButton.addActionListener(e -> System.out.println("Delete Card"));
+        
+        ArrayList<JButton> rs = new ArrayList<JButton>();
+        rs.add(viewButton);
+        rs.add(editButton);
+        rs.add(deleteButton);
+        return rs;
     }
-
 
     private String getCachedImage(String imageUrl) throws IOException {
         File dir = new File(IMAGE_DIR);
@@ -325,22 +453,6 @@ public class PetManagerView extends JFrame {
         button.setFont(new Font("Arial", Font.BOLD, 14));
         return button;
     }
-
-    private ArrayList<PetCard> createSamplePets() {
-    	ArrayList<PetCard> petList = new ArrayList<>();
-        String url = "https://github.com/vantuong147/ImageAssets/blob/main/PetImages/Designer%20(1).jpg?raw=true";
-        for (int i = 1; i <= 30; i++) {
-            PetCard pet = new PetCard("Pet " + i, url, "Mô tả pet " + i, i);
-            pet.species = "Loài " + (i % 3 + 1);
-            pet.color = i % 2 == 0 ? "Đỏ" : "Xanh";
-            pet.weight = i;
-            petList.add(pet);
-        }
-        
-        petList.sort(Comparator.comparing(PetCard::getName));
-        
-        return petList;
-    }
     
     private ArrayList<PetCard> loadPetData() {
     	ArrayList<PetCard> petList = new ArrayList<>();
@@ -354,6 +466,21 @@ public class PetManagerView extends JFrame {
         petList.sort(Comparator.comparing(PetCard::getName));
         
         return petList;
+    }
+    
+    private ArrayList<PetCard> loadPetInSpeiciesData(int speciesID) {
+    	ArrayList<PetCard> petDetailList = new ArrayList<>();
+        ArrayList<Pet> data = new PetDAO().getAllPetsBySpeicies(speciesID);
+    	int n = data.size();
+        for (int i = 0; i < n; i++)
+    	{
+        	Debug.Log("Pet: " + data.get(i).petName);
+        	petDetailList.add(data.get(i).toPetCard());
+    	}
+    	
+        petDetailList.sort(Comparator.comparing(PetCard::getName));
+        
+        return petDetailList;
     }
 
     public static void main(String[] args) {

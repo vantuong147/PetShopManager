@@ -9,8 +9,8 @@ import DBManager.DBConnection;
 
 public class PetSpeciesDAO {
 	// Method to get all pet species
-	public List<PetSpecies> getAllPetSpecies() {
-		List<PetSpecies> petSpeciesList = new ArrayList<>();
+	public ArrayList<PetSpecies> getAllPetSpecies() {
+		ArrayList<PetSpecies> petSpeciesList = new ArrayList<>();
 		String sql = "SELECT * FROM PetSpecies";
 
 		try (Connection conn = DBConnection.getConnection();
