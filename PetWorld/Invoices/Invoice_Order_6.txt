@@ -1,0 +1,10 @@
+Invoice for Order ID: 6
+Staff: admin
+Date: 2025-01-04 20:53:51.624
+---------------------------------------------------
+Pet Details:
+ID: 7 | Name: Golden Retriever 1 | Price: $7000000.0
+ID: 11 | Name: Bunny Rabbit 1 | Price: $150.0
+---------------------------------------------------
+Total Amount: $7000150.0
+Thank you for your purchase!

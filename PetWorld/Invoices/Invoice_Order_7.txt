@@ -1,0 +1,9 @@
+Invoice for Order ID: 7
+Staff: admin
+Date: 2025-01-04 20:53:57.882
+---------------------------------------------------
+Pet Details:
+ID: 17 | Name: Goldfish 1 | Price: $20.0
+---------------------------------------------------
+Total Amount: $20.0
+Thank you for your purchase!

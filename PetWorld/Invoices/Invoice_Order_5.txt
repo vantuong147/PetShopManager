@@ -1,0 +1,10 @@
+Invoice for Order ID: 5
+Staff: admin
+Date: 2025-01-04 20:53:42.446
+---------------------------------------------------
+Pet Details:
+ID: 5 | Name: Tiny Poodle 1 | Price: $500000.0
+ID: 6 | Name: Tiny Poodle 2 | Price: $800000.0
+---------------------------------------------------
+Total Amount: $1300000.0
+Thank you for your purchase!

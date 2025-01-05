@@ -72,6 +72,24 @@ public class CustomerDAO {
         }
         return null;
     }
+    public Customer getCustomerByPhone(String phone) {
+        String query = "SELECT * FROM Customer WHERE phone = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, phone);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Customer(
+                        rs.getInt("id"),
+                        rs.getString("phone"),
+                        rs.getString("name")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ArrayList<Customer> getAllCustomers() {
         ArrayList<Customer> customerList = new ArrayList<>();

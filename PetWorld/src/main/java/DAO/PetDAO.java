@@ -56,6 +56,18 @@ public class PetDAO {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public void sellPet(int petId) {
+	    String query = "UPDATE Pet SET state = 'SALED' WHERE id = ?";
+	    try (Connection connection = DBConnection.getConnection();
+	         PreparedStatement ps = connection.prepareStatement(query)) {
+	        // Cập nhật trạng thái 'state' thành 'SALED' cho pet có id tương ứng
+	        ps.setInt(1, petId);
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 
     public void deletePet(int id) {
@@ -125,6 +137,33 @@ public class PetDAO {
     public ArrayList<Pet> getAllPetsBySpeicies(int spID) {
         ArrayList<Pet> petList = new ArrayList<>();
         String query = "SELECT * FROM Pet WHERE pet_species_id = " + spID;
+        try (Connection connection = DBConnection.getConnection();
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+            while (rs.next()) {
+                Pet pet = new Pet(
+                        rs.getInt("id"),
+                        rs.getString("pet_name"),
+                        rs.getFloat("price"),
+                        rs.getInt("age"),
+                        rs.getString("color"),
+                        rs.getString("description"),
+                        rs.getString("state"),
+                        rs.getInt("pet_species_id"),
+                        rs.getString("images"),
+                        rs.getFloat("weight")
+                );
+                petList.add(pet);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return petList;
+    }
+    
+    public ArrayList<Pet> getAllPetsBySpeiciesNotSaled(int spID) {
+        ArrayList<Pet> petList = new ArrayList<>();
+        String query = "SELECT * FROM Pet WHERE pet_species_id = " + spID + " AND state <> 'SALED'";
         try (Connection connection = DBConnection.getConnection();
              Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {

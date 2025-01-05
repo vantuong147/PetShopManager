@@ -1,0 +1,11 @@
+Invoice for Order ID: 8
+Staff: admin
+Date: 2025-01-04 20:54:17.835
+---------------------------------------------------
+Pet Details:
+ID: 27 | Name: Chinchilla 1 | Price: $500.0
+ID: 19 | Name: Guinea Pig 1 | Price: $60.0
+ID: 29 | Name: Ferret 1 | Price: $150.0
+---------------------------------------------------
+Total Amount: $710.0
+Thank you for your purchase!

@@ -93,7 +93,7 @@ public class PetSpeciesDAO {
 
 	// Method to update a pet species
 	public boolean updatePetSpecies(PetSpecies petSpecies) {
-		String sql = "UPDATE PetSpecies SET species_name = ?, avg_min_price = ?, avg_max_price = ?, avg_weight = ?, avg_max_age = ? WHERE id = ?";
+		String sql = "UPDATE PetSpecies SET species_name = ?, avg_min_price = ?, avg_max_price = ?, avg_weight = ?, avg_max_age = ?, image_url = ?, des = ? WHERE id = ?";
 
 		try (Connection conn = DBConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -103,7 +103,9 @@ public class PetSpeciesDAO {
 			pstmt.setFloat(3, petSpecies.getAvgMaxPrice());
 			pstmt.setFloat(4, petSpecies.getAvgWeight());
 			pstmt.setInt(5, petSpecies.getAvgMaxAge());
-			pstmt.setInt(6, petSpecies.getId());
+			pstmt.setString(6, petSpecies.imageUrl);
+			pstmt.setString(7, petSpecies.des);
+			pstmt.setInt(8, petSpecies.getId());
 
 			int rowsAffected = pstmt.executeUpdate();
 			return rowsAffected > 0;

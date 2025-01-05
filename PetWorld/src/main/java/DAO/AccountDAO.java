@@ -84,6 +84,27 @@ public class AccountDAO {
         }
         return null;
     }
+    
+    public Account checkLogin(String username, String passw) {
+        String query = "SELECT * FROM Account WHERE username = ? AND passw = ?";
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setString(1, username);
+            ps.setString(2, passw);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Account(
+                        rs.getInt("id"),
+                        rs.getString("username"),
+                        rs.getString("passw"),
+                        rs.getString("account_type")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ArrayList<Account> getAllAccounts() {
     	ArrayList<Account> accounts = new ArrayList<>();

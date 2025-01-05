@@ -1,0 +1,9 @@
+Invoice for Order ID: 9
+Staff: admin
+Date: 2025-01-05 07:45:46.41
+---------------------------------------------------
+Pet Details:
+ID: 8 | Name: Golden Retriever 2 | Price: $9000000.0
+---------------------------------------------------
+Total Amount: $9000000.0
+Thank you for your purchase!

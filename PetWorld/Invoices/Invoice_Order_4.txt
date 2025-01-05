@@ -1,0 +1,9 @@
+Invoice for Order ID: 4
+Staff: admin
+Date: 2025-01-04 20:53:32.172
+---------------------------------------------------
+Pet Details:
+ID: 9 | Name: Persian Cat 1 | Price: $1200.0
+---------------------------------------------------
+Total Amount: $1200.0
+Thank you for your purchase!

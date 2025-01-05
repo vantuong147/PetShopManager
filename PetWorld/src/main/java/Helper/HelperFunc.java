@@ -32,4 +32,10 @@ public class HelperFunc {
 			buttonPanel.add(buttons.get(i));
 		}
 	}
+	public static String isValidPhone(String phone)
+	{
+		if (phone.length() != 10)
+			return "Invalid phone length";
+		return "OK";
+	}
 }

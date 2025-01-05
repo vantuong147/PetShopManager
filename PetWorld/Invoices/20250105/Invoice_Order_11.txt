@@ -1,0 +1,9 @@
+Invoice for Order ID: 11
+Staff: admin
+Date: 2025-01-05 07:50:13.949
+---------------------------------------------------
+Pet Details:
+ID: 13 | Name: Hamster 1 | Price: $20.0
+---------------------------------------------------
+Total Amount: $20.0
+Thank you for your purchase!

@@ -87,7 +87,7 @@ public class PetSpecies {
     	pc.mode = "SPEC";
     	pc.name = this.speciesName;
     	pc.imageUrl = this.imageUrl;
-    	pc.des = "";
+    	pc.des = this.des;
     	pc.quantity = this.unsoldQuantity;
     	pc.species = this.speciesName;
     	pc.specID = this.id;
@@ -95,6 +95,7 @@ public class PetSpecies {
     	pc.color = "Xanh";
     	pc.minPrice = this.avgMinPrice;
     	pc.maxPrice = this.avgMaxPrice;
+    	pc.age = this.avgMaxAge;
     	return pc;
     }
 

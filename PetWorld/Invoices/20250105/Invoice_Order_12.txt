@@ -1,0 +1,11 @@
+Invoice for Order ID: 12
+Staff: admin
+Date: 2025-01-05 09:24:35.985
+---------------------------------------------------
+Pet Details:
+ID: 15 | Name: Macaw Parrot 1 | Price: $1800.0
+ID: 16 | Name: Macaw Parrot 2 | Price: $2200.0
+ID: 12 | Name: Bunny Rabbit 2 | Price: $200.0
+---------------------------------------------------
+Total Amount: $4200.0
+Thank you for your purchase!

@@ -1,6 +1,9 @@
 package Model;
 
+import java.util.Objects;
+
 import DAO.PetSpeciesDAO;
+import Helper.HelperFunc;
 import ViewModel.PetCard;
 
 public class Pet {
@@ -99,9 +102,13 @@ public class Pet {
     	PetSpecies p = psDAO.getPetSpeciesById(this.petSpeciesId);
     	
     	PetCard pc = new PetCard();
+    	pc.pet = this;
     	pc.mode = "PET";
     	pc.name = this.petName;
-    	pc.imageUrl = this.images.split(",")[0];
+    	if (this.images != null && this.images != "")
+    		pc.imageUrl = this.images.split(",")[0];
+    	else
+    		pc.imageUrl = "";
     	pc.des = this.description;
     	pc.quantity = 1;
     	pc.species = p.speciesName;
@@ -111,20 +118,46 @@ public class Pet {
     	pc.minPrice = -1;
     	pc.maxPrice = -1;
     	pc.petPrice = this.price;
+    	pc.age = this.age;
     	return pc;
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true; // Nếu cùng một đối tượng thì equals là true
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false; // Nếu obj là null hoặc không cùng kiểu lớp thì equals là false
+        }
+        Pet pet = (Pet) obj; // Ép kiểu về Pet
+        return this.id == pet.id; // So sánh theo id
+    }
 
+    // Override hashCode() để đảm bảo tính nhất quán với equals
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Sử dụng id để tạo mã hash
+    }
+
+//    @Override
+//    public String toString() {
+//        return "Pet{" +
+//                "id=" + id +
+//                ", petName='" + petName + '\'' +
+//                ", price=" + price +
+//                ", age=" + age +
+//                ", color='" + color + '\'' +
+//                ", description='" + description + '\'' +
+//                ", state='" + state + '\'' +
+//                ", petSpeciesId=" + petSpeciesId +
+//                '}';
+//    }
     @Override
     public String toString() {
         return "Pet{" +
                 "id=" + id +
                 ", petName='" + petName + '\'' +
-                ", price=" + price +
-                ", age=" + age +
-                ", color='" + color + '\'' +
-                ", description='" + description + '\'' +
-                ", state='" + state + '\'' +
-                ", petSpeciesId=" + petSpeciesId +
+                ", price=" + HelperFunc.formatCurrency(price) +
                 '}';
     }
 }

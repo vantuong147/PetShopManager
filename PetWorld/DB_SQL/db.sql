@@ -26,9 +26,12 @@ CREATE TABLE Pet (
     age INT NOT NULL, 
     color VARCHAR(7) NOT NULL,  -- Hexadecimal color code
     description TEXT, 
-    state VARCHAR(50) CHECK (state IN ('NOT_SALED', 'SALED')) NOT NULL, 
+    state VARCHAR(50) NOT NULL, 
     pet_species_id INT
 );
+ALTER TABLE Pet
+ADD images TEXT,
+    weight FLOAT;
 
 -- Create Customer Table
 CREATE TABLE Customer (

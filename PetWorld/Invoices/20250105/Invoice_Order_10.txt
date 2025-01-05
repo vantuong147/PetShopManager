@@ -1,0 +1,9 @@
+Invoice for Order ID: 10
+Staff: admin
+Date: 2025-01-05 07:49:00.201
+---------------------------------------------------
+Pet Details:
+ID: 10 | Name: Persian Cat 2 | Price: $1500.0
+---------------------------------------------------
+Total Amount: $1500.0
+Thank you for your purchase!

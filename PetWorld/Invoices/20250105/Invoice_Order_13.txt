@@ -1,0 +1,10 @@
+Invoice for Order ID: 13
+Staff: admin
+Date: 2025-01-05 09:41:12.95
+---------------------------------------------------
+Pet Details:
+ID: 32 | Name: Begie 1 | Price: $1.5E7
+ID: 14 | Name: Hamster 2 | Price: $30.0
+---------------------------------------------------
+Total Amount: $1.500003E7
+Thank you for your purchase!
