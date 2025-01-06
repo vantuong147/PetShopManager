@@ -211,14 +211,14 @@ public class SellPetPanel extends JPanel {
             String phone = txtPhone.getText().trim();
 
             if (name.isEmpty() || phone.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Name or Phone is empty. Customer ID will be set to 0.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                processOrder(0); // Sử dụng customer id = 0
+                JOptionPane.showMessageDialog(this, "Name or Phone is empty. Customer ID will be set to 1 - GUEST.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                processOrder(1); // Sử dụng customer id = 1
             } else {
                 // Kiểm tra số điện thoại có hợp lệ không (ví dụ, kiểm tra định dạng số điện thoại)
                 String checkPhone = HelperFunc.isValidPhone(phone);
                 if (checkPhone != "OK") {
                     JOptionPane.showMessageDialog(this, checkPhone + ". Customer ID will be set to 0.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                    processOrder(0); // Sử dụng customer id = 0
+                    processOrder(1); // Sử dụng customer id = 0
                 } else {
                     // Tìm kiếm khách hàng dựa trên số điện thoại
                     int customerId = PetDBManager.findOrCreateCustomer(name, phone);
